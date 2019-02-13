@@ -1,0 +1,75 @@
+/* .top-left {
+  width: 312.5px;
+  height: 312.5px;
+  background: url(../homer.jpg) 0 0px;
+}
+.top-right {
+  width: 312.5px;
+  height: 312.5px;
+  background: url(../homer.jpg) 312.5 0px;
+}
+.bottom-left {
+  width: 312.5px;
+  height: 312.5px;
+  background: url(../homer.jpg) 0 -312.5px;
+}
+.bottom-right {
+  width: 312.5px;
+  height: 312.5px;
+  background: url(../homer.jpg) 312.5 -312.5px;
+} */
+@media screen and (min-width: 1600px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) 0 0px;
+  }
+}
+@media screen and (min-width: 1400px) and (max-width: 1600px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) -312.5px 0;
+  }
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1400px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) 0 -312.5px;
+  }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1200px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) -312.5px -312.5px;
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 1000px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) 0 -312.5px;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 800px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) 312.5px 0;
+  }
+}
+
+@media screen and (max-width: 600px) and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi) {
+  /* less than 600 top left, works */
+  .homer {
+    width: 312.5px;
+    height: 312.5px;
+    background: url(../responsive/homer.jpg) 0 0px;
+  }
+}
