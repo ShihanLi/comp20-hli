@@ -14,10 +14,60 @@
       id="butwehavethepower"
       controls
     ></video>
+    <!--  what I want to do is use javascript to change lyrics as I listen for video.  -->
     <div id="lyrics"></div>
 
     <script>
-      // Complete this section and create a CSS file named style.css
+      var video = document.getElementById("butwehavethepower");
+      var lyrics = document.getElementById("lyrics");
+
+      video.addEventListener(
+        "timeupdate",
+        function() {
+          if (video.currentTime < 6) {
+            lyrics.innerHTML = "<h3>Music</h3>";
+          } else if (video.currentTime > 6 && video.currentTime < 11) {
+            lyrics.innerHTML =
+              "<h3>Come gather round, children, It's high time ye learned</h3>";
+          } else if (video.currentTime > 11 && video.currentTime < 16.5) {
+            lyrics.innerHTML =
+              "<h3>'Bout a hero named Homer And a devil named Burns.</h3>";
+          } else if (video.currentTime > 16.5 && video.currentTime < 21) {
+            lyrics.innerHTML =
+              "<h3>We'll march 'till we drop The girls and the fellas.</h3>";
+          } else if (video.currentTime > 21 && video.currentTime < 27) {
+            lyrics.innerHTML =
+              "<h3>We'll fight 'till the death Or else fold like umbrellas. </h3>";
+          } else if (video.currentTime > 27 && video.currentTime < 37) {
+            lyrics.innerHTML = "<h3>Scene</h3>";
+          } else if (video.currentTime > 37 && video.currentTime < 42.5) {
+            lyrics.innerHTML =
+              "<h3>So we'll march day and night By the big cooling tower.</h3>";
+          } else if (video.currentTime > 42.5 && video.currentTime < 50) {
+            lyrics.innerHTML =
+              "<h3>They have the plant But we have the power.</h3>";
+          } else if (video.currentTime > 52 && video.currentTime < 56) {
+            lyrics.innerHTML = '<h3>Lenny: Now do "Classical Gas"!</h3>';
+          } else if (video.currentTime > 56 && video.currentTime < 73) {
+            lyrics.innerHTML = "<h3>music</h3>";
+          } else if (video.currentTime > 73 && video.currentTime < 77.5) {
+            lyrics.innerHTML =
+              "<h3>So we'll march day and night By the big cooling tower.</h3>";
+          } else if (video.currentTime > 77.5 && video.currentTime < 82) {
+            lyrics.innerHTML =
+              "<h3>They have the plant But we have the power.</h3>";
+          } else if (video.currentTime > 82 && video.currentTime < 87) {
+            lyrics.innerHTML =
+              "<h3>So we'll march day and night By the big cooling tower.</h3>";
+          } else if (video.currentTime > 87 && video.currentTime < 91) {
+            lyrics.innerHTML =
+              "<h3>They have the plant But we have the power.</h3>";
+          } else {
+            lyrics.innerHTML = "";
+          }
+        },
+        false
+      );
     </script>
   </body>
 </html>
