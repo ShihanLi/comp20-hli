@@ -1,0 +1,27 @@
+body {
+  background-color: black;
+}
+
+#title {
+  font-size: 40px;
+  text-align: center;
+  color: yellow;
+  font-family: "Coiny", cursive;
+}
+
+#butwehavethepower {
+  display: block;
+  margin: 0 auto;
+  width: 75%;
+}
+
+#lyrics {
+  text-align: center;
+}
+
+h3 {
+  font-family: "Coiny", cursive;
+  font-weight: bold;
+  color: yellow;
+  font-size: 30px;
+}
