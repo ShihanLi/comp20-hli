@@ -82,8 +82,9 @@
           if (request.readyState == 4 && request.status == 200) {
             rides = JSON.parse(request.responseText);
             for (count = 0; count < rides.vehicles.length; count++) {
-              console.log(rides.vehicles[count].lat);
-              console.log(rides.vehicles[count].lng);
+              if (rides.vehicles[count].username == "WEINERMOBILE") {
+                addMarker(rides.vehicles[count].lat, rides.vehicles[count].lng);
+              }
               addMarker(rides.vehicles[count].lat, rides.vehicles[count].lng);
             }
             console.log(rides);
@@ -97,7 +98,7 @@
     <script
       async2
       defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJHmpZ7eL6nbpVMfw3Fa8WNqB3o4-gydw&callback=initMap&callback=initMap"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJHmpZ7eL6nbpVMfw3Fa8WNqB3o4-gydw&callback=initMap"
     ></script>
   </body>
 </html>
