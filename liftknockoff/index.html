@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Private Car Service</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+
+  <body>
+    <h1>My Google Map</h1>
+    <div id="map"></div>
+    <script>
+      //i am a passenger!!!!!1
+      var myLat;
+      var myLng;
+      var map;
+      var me;
+      var marker;
+      var infowindow;
+      var request;
+      var rides;
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            myLat = position.coords.latitude;
+            myLng = position.coords.longitude;
+            renderMap();
+          });
+        } else {
+          alert("Geolocation is not supported by your browser!");
+        }
+      }
+      function initMap() {
+        getLocation();
+        var options = {
+          center: { lat: 442.4081841, lng: 71.1162405 },
+          zoom: 13
+        };
+        map = new google.maps.Map(document.getElementById("map"), options);
+      }
+      function renderMap() {
+        me = new google.maps.LatLng(myLat, myLng);
+        // Update map and go there...
+        map.panTo(me);
+
+        // Create a marker
+        marker = new google.maps.Marker({
+          position: me,
+          title: "Here I Am!"
+        });
+        marker.setMap(map);
+
+        // Open info window on click of marker
+        infowindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(marker, "click", function() {
+          infowindow.setContent(marker.title);
+          infowindow.open(map, marker);
+        });
+        loadRides();
+      }
+
+      function addMarker(latInfo, lngInfo) {
+        var vehicle = new google.maps.Marker({
+          position: { lat: latInfo, lng: lngInfo },
+          map: map
+        });
+      }
+
+      function loadRides() {
+        /* Step 1: Make instance of XHR object...
+      ...to make HTTP request after page is loaded*/
+        request = new XMLHttpRequest();
+        // Step 2: Open the JSON file at remote location
+        request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
+        request.setRequestHeader(
+          "Content-type",
+          "application/x-www-form-urlencoded"
+        );
+        // Step 3: set up callback for when HTTP response is returned (i.e., you get the JSON file back)
+        request.onreadystatechange = function() {
+          if (request.readyState == 4 && request.status == 200) {
+            rides = JSON.parse(request.responseText);
+            for (count = 0; count < rides.vehicles.length; count++) {
+              console.log(rides.vehicles[count].lat);
+              console.log(rides.vehicles[count].lng);
+              addMarker(rides.vehicles[count].lat, rides.vehicles[count].lng);
+            }
+            console.log(rides);
+            console.log(rides.vehicles[0].username);
+          }
+        };
+        // Step 4: fire off the HTTP request
+        request.send("username=VkXZet8t&lat=" + myLat + "&lng=" + myLng);
+      }
+    </script>
+    <script
+      async2
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJHmpZ7eL6nbpVMfw3Fa8WNqB3o4-gydw&callback=initMap&callback=initMap"
+    ></script>
+  </body>
+</html>
