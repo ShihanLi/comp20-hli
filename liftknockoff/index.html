@@ -2,24 +2,29 @@
 <html>
   <head>
     <title>Private Car Service</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="initial-scale=1.0" />
     <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css" type="text/css" />
   </head>
-
   <body>
-    <h1>My Google Map</h1>
     <div id="map"></div>
     <script>
-      //i am a passenger!!!!!1
+      var map;
       var myLat;
       var myLng;
-      var map;
       var me;
-      var marker;
+      var username = "NgfcWZmS";
       var infowindow;
-      var request;
-      var rides;
+      var homemarker;
+
+      function initMap() {
+        getLocation();
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 442.4081841, lng: 71.1162405 },
+          zoom: 13
+        });
+      }
+
       function getLocation() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
@@ -31,74 +36,197 @@
           alert("Geolocation is not supported by your browser!");
         }
       }
-      function initMap() {
-        getLocation();
-        var options = {
-          center: { lat: 442.4081841, lng: 71.1162405 },
-          zoom: 13
-        };
-        map = new google.maps.Map(document.getElementById("map"), options);
-      }
+
       function renderMap() {
         me = new google.maps.LatLng(myLat, myLng);
         // Update map and go there...
         map.panTo(me);
 
-        // Create a marker
-        marker = new google.maps.Marker({
-          position: me,
-          title: "Here I Am!"
-        });
-        marker.setMap(map);
+        var icon = {
+          url: "base.png", // url
+          scaledSize: new google.maps.Size(50, 50), // scaled size
+          origin: new google.maps.Point(0, 0), // origin
+          anchor: new google.maps.Point(0, 0) // anchor
+        };
 
-        // Open info window on click of marker
-        infowindow = new google.maps.InfoWindow();
-        google.maps.event.addListener(marker, "click", function() {
-          infowindow.setContent(marker.title);
-          infowindow.open(map, marker);
+        homemarker = new google.maps.Marker({
+          position: me,
+          map: map,
+          title: "Username is " + username,
+          icon: icon
         });
+        homemarker.setMap(map);
         loadRides();
       }
 
-      function addMarker(latInfo, lngInfo) {
-        var vehicle = new google.maps.Marker({
-          position: { lat: latInfo, lng: lngInfo },
-          map: map
-        });
-      }
-
       function loadRides() {
-        /* Step 1: Make instance of XHR object...
-      ...to make HTTP request after page is loaded*/
-        request = new XMLHttpRequest();
-        // Step 2: Open the JSON file at remote location
+        var weinermobile = "weinermobile.png";
+        var car = "car.png";
+        var dude = {
+          url: "passenger.png",
+          scaledSize: new google.maps.Size(50, 50), // scaled size
+          origin: new google.maps.Point(0, 0), // origin
+          anchor: new google.maps.Point(0, 0) // anchor
+        };
+        var minDist = Infinity;
+        var request = new XMLHttpRequest();
         request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
         request.setRequestHeader(
           "Content-type",
           "application/x-www-form-urlencoded"
         );
-        // Step 3: set up callback for when HTTP response is returned (i.e., you get the JSON file back)
         request.onreadystatechange = function() {
           if (request.readyState == 4 && request.status == 200) {
-            rides = JSON.parse(request.responseText);
-            for (count = 0; count < rides.vehicles.length; count++) {
-              if (rides.vehicles[count].username == "WEINERMOBILE") {
-                addMarker(rides.vehicles[count].lat, rides.vehicles[count].lng);
+            var data = JSON.parse(request.responseText);
+            if (data.hasOwnProperty("vehicles")) {
+              // I'm a passenger
+
+              for (count = 0; count < data.vehicles.length; count++) {
+                if (data.vehicles[count].username == "WEINERMOBILE") {
+                  var weinerDist = calcDist(
+                    myLat,
+                    myLng,
+                    data.vehicles[count].lat,
+                    data.vehicles[count].lng
+                  );
+                  addMarker(
+                    data.vehicles[count].lat,
+                    data.vehicles[count].lng,
+                    weinermobile,
+                    data.vehicles[count].username,
+                    weinerDist
+                  );
+                } else {
+                  var carDist = calcDist(
+                    myLat,
+                    myLng,
+                    data.vehicles[count].lat,
+                    data.vehicles[count].lng
+                  );
+                  addMarker(
+                    data.vehicles[count].lat,
+                    data.vehicles[count].lng,
+                    car,
+                    data.vehicles[count].username,
+                    carDist
+                  );
+                  minDist = updataMinDist(minDist, carDist);
+                }
               }
-              addMarker(rides.vehicles[count].lat, rides.vehicles[count].lng);
+              infowindow = new google.maps.InfoWindow();
+              google.maps.event.addListener(homemarker, "click", function() {
+                infowindow.setContent(
+                  "username is " +
+                    username +
+                    ", distance to weinermobile is " +
+                    weinerDist +
+                    ", distance to closest ride is " +
+                    carDist
+                );
+                infowindow.open(map, homemarker);
+              });
+            } else {
+              //I'm a vehicle
+              for (count = 0; count < data.passengers.length; count++) {
+                if (data.passengers[count].username == "WEINERMOBILE") {
+                  var weinerDist = calcDist(
+                    myLat,
+                    myLng,
+                    data.passengers[count].lat,
+                    data.passengers[count].lng
+                  );
+                  addMarker(
+                    data.passengers[count].lat,
+                    data.passengers[count].lng,
+                    weinermobile,
+                    data.passengers[count].username,
+                    weinerDist
+                  );
+                } else {
+                  var psgDist = calcDist(
+                    myLat,
+                    myLng,
+                    data.passengers[count].lat,
+                    data.passengers[count].lng
+                  );
+                  addMarker(
+                    data.passengers[count].lat,
+                    data.passengers[count].lng,
+                    dude,
+                    data.passengers[count].username,
+                    psgDist
+                  );
+                  minDist = updataMinDist(minDist, psgDist);
+                }
+              }
+              infowindow = new google.maps.InfoWindow();
+              google.maps.event.addListener(homemarker, "click", function() {
+                infowindow.setContent(
+                  "username is " +
+                    username +
+                    ", distance to weinermobile is " +
+                    weinerDist +
+                    ", distance to closest passenger is " +
+                    psgDist
+                );
+                infowindow.open(map, homemarker);
+              });
             }
-            console.log(rides);
-            console.log(rides.vehicles[0].username);
           }
         };
         // Step 4: fire off the HTTP request
-        request.send("username=VkXZet8t&lat=" + myLat + "&lng=" + myLng);
+        request.send(
+          "username=" + username + "&lat=" + myLat + "&lng=" + myLng
+        );
+      }
+      function updataMinDist(minD, carD) {
+        if (carD < minD) {
+          return carD;
+        } else {
+          return minD;
+        }
+      }
+      Number.prototype.toRad = function() {
+        return (this * Math.PI) / 180;
+      };
+
+      function calcDist(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var x1 = lat2 - lat1;
+        var dLat = x1.toRad();
+        var x2 = lon2 - lon1;
+        var dLon = x2.toRad();
+        var a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1.toRad()) *
+            Math.cos(lat2.toRad()) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        return d;
+      }
+
+      function addMarker(latInfo, lngInfo, iconInfo, username, dist) {
+        var mk = new google.maps.Marker({
+          position: { lat: latInfo, lng: lngInfo },
+          map: map,
+          icon: iconInfo
+        });
+        mk.setMap(map);
+        infowindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(mk, "click", function() {
+          infowindow.setContent(
+            "username is " + username + ", and the distance from you is " + dist
+          );
+          infowindow.open(map, mk);
+        });
       }
     </script>
     <script
-      async2
-      defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJHmpZ7eL6nbpVMfw3Fa8WNqB3o4-gydw&callback=initMap"
+      async
+      defer
     ></script>
   </body>
 </html>
