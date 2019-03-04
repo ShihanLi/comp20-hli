@@ -13,7 +13,7 @@
       var myLat;
       var myLng;
       var me;
-      var username = "NgfcWZmS";
+      var username = "VkXZet8t";
       var infowindow;
       var homemarker;
 
@@ -60,15 +60,13 @@
       }
 
       function loadRides() {
-        var weinermobile = "weinermobile.png";
-        var car = "car.png";
         var dude = {
           url: "passenger.png",
           scaledSize: new google.maps.Size(50, 50), // scaled size
           origin: new google.maps.Point(0, 0), // origin
           anchor: new google.maps.Point(0, 0) // anchor
         };
-        var minDist = Infinity;
+        var car = "car.png";
         var request = new XMLHttpRequest();
         request.open("POST", "https://hans-moleman.herokuapp.com/rides", true);
         request.setRequestHeader(
@@ -80,97 +78,10 @@
             var data = JSON.parse(request.responseText);
             if (data.hasOwnProperty("vehicles")) {
               // I'm a passenger
-
-              for (count = 0; count < data.vehicles.length; count++) {
-                if (data.vehicles[count].username == "WEINERMOBILE") {
-                  var weinerDist = calcDist(
-                    myLat,
-                    myLng,
-                    data.vehicles[count].lat,
-                    data.vehicles[count].lng
-                  );
-                  addMarker(
-                    data.vehicles[count].lat,
-                    data.vehicles[count].lng,
-                    weinermobile,
-                    data.vehicles[count].username,
-                    weinerDist
-                  );
-                } else {
-                  var carDist = calcDist(
-                    myLat,
-                    myLng,
-                    data.vehicles[count].lat,
-                    data.vehicles[count].lng
-                  );
-                  addMarker(
-                    data.vehicles[count].lat,
-                    data.vehicles[count].lng,
-                    car,
-                    data.vehicles[count].username,
-                    carDist
-                  );
-                  minDist = updataMinDist(minDist, carDist);
-                }
-              }
-              infowindow = new google.maps.InfoWindow();
-              google.maps.event.addListener(homemarker, "click", function() {
-                infowindow.setContent(
-                  "username is " +
-                    username +
-                    ", distance to weinermobile is " +
-                    weinerDist +
-                    ", distance to closest ride is " +
-                    carDist
-                );
-                infowindow.open(map, homemarker);
-              });
+              search(data.vehicles, car);
             } else {
               //I'm a vehicle
-              for (count = 0; count < data.passengers.length; count++) {
-                if (data.passengers[count].username == "WEINERMOBILE") {
-                  var weinerDist = calcDist(
-                    myLat,
-                    myLng,
-                    data.passengers[count].lat,
-                    data.passengers[count].lng
-                  );
-                  addMarker(
-                    data.passengers[count].lat,
-                    data.passengers[count].lng,
-                    weinermobile,
-                    data.passengers[count].username,
-                    weinerDist
-                  );
-                } else {
-                  var psgDist = calcDist(
-                    myLat,
-                    myLng,
-                    data.passengers[count].lat,
-                    data.passengers[count].lng
-                  );
-                  addMarker(
-                    data.passengers[count].lat,
-                    data.passengers[count].lng,
-                    dude,
-                    data.passengers[count].username,
-                    psgDist
-                  );
-                  minDist = updataMinDist(minDist, psgDist);
-                }
-              }
-              infowindow = new google.maps.InfoWindow();
-              google.maps.event.addListener(homemarker, "click", function() {
-                infowindow.setContent(
-                  "username is " +
-                    username +
-                    ", distance to weinermobile is " +
-                    weinerDist +
-                    ", distance to closest passenger is " +
-                    psgDist
-                );
-                infowindow.open(map, homemarker);
-              });
+              search(data.passengers, dude);
             }
           }
         };
@@ -179,6 +90,56 @@
           "username=" + username + "&lat=" + myLat + "&lng=" + myLng
         );
       }
+
+      function search(array, theicon) {
+        var weinermobile = "weinermobile.png";
+        var minDist = Infinity;
+        for (count = 0; count < array.length; count++) {
+          if (array[count].username == "WEINERMOBILE") {
+            var weinerDist = calcDist(
+              myLat,
+              myLng,
+              array[count].lat,
+              array[count].lng
+            );
+            addMarker(
+              array[count].lat,
+              array[count].lng,
+              weinermobile,
+              array[count].username,
+              weinerDist
+            );
+          } else {
+            var Dist = calcDist(
+              myLat,
+              myLng,
+              array[count].lat,
+              array[count].lng
+            );
+            addMarker(
+              array[count].lat,
+              array[count].lng,
+              theicon,
+              array[count].username,
+              Dist
+            );
+            minDist = updataMinDist(minDist, Dist);
+          }
+        }
+        infowindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(homemarker, "click", function() {
+          infowindow.setContent(
+            "username is " +
+              username +
+              ", distance to weinermobile is " +
+              weinerDist +
+              ", distance to closest car/passenger is " +
+              Dist
+          );
+          infowindow.open(map, homemarker);
+        });
+      }
+
       function updataMinDist(minD, carD) {
         if (carD < minD) {
           return carD;
@@ -186,6 +147,7 @@
           return minD;
         }
       }
+
       Number.prototype.toRad = function() {
         return (this * Math.PI) / 180;
       };
