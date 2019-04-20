@@ -1,0 +1,25 @@
+1: What is the purpose of this git repository?
+This repository contains three projects: One assignment and two labs in which I practiced 
+HTML, CSS, and JavaScript skills. 
+
+2: Assignment 2 and 3 combined is one of my favorite in class project overall. While I 
+can learn the concepts of client and server in class, I never understood how frontend and 
+backend interact with each other, how information flows between modules, and where does security
+come in so clearly before doing these assignments. Assignments like these also changed my 
+mindset with coding once and for all. Before this, I could always go to TAs and office hours
+to resolve any problems that come up during implementation. However, web programming has taught me 
+the importance of sitting down and spending time googling for the solution. I realized that
+one can't know or understand everything and there is bound to be tons of self learning and 
+problem solving in order to improve one's skills. These two assignments allowed me to learn 
+frameworks, JavaScript, APIs by myself and is truly one of the best learning experiences I've had. 
+
+3: This courses introduced me to coding within the industry. I was able to 
+get my first comp sci internship throught the concepts and skills I've gained from it. Like I 
+mentioned above, my mindset has grown and I've been introduced to so many fields within the industry that
+I'm truly interested in learning more about. 
+
+4: Never trust user input (from lecture).  And really focus on details. (google api takes lat, lng
+only as integers if you feed it strings it'll break)
+
+5: Next semester I hope to take operating systems with either security or internet distributed systems.
+Later on I will take programming languages, database systems, networks, and a class about user interface. 
