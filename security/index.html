@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Security Report</title>
+    <meta name="viewport" content="initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <div id="introduction">
+      <h1>Introduction</h1>
+      <p>
+        I will be exploring security vulnerabilities in a ride hailing service
+        website, which stores the username and location information in MongoDB.
+      </p>
+    </div>
+    <div id="methodology">
+      <h1>Methodology</h1>
+      <p>
+        I used OWASP Zed Attack Proxy to detect the aforementioned
+        vulnerabilities.
+      </p>
+      <p>
+        I used curl to insert dangerous data into MongoDB database, hoping to
+        explore cross site scripting vulnerabilities and redirect the website to
+        another dangerous site.
+      </p>
+      <p>
+        I tested for NoSQL injection by tricking the MongoDB database to return
+        all user information by implementing a dangerous command:
+        https://secret-peak-95207.herokuapp.com/passenger.json?username[$ne]=JANE
+      </p>
+    </div>
+    <div id="abstract">
+      <h1>Abstract of Findings</h1>
+      <p>
+        I've found that this website is very unsecure and is under high risks of
+        exposing user data and prone to attacks. The entire user information
+        database can be easily access without proper permission by using a
+        simple mongodb api command. The website is also not protected against
+        clickjacking, which tricks the user into clicking into a malicious cite
+        or software thinking they are doing something else, and cross site
+        scripting, which can trigger the website to execute other codes that is
+        not programmed by the original programmer. This opens the door to many
+        other vulnerabilities through bypassing the security settings the
+        developer set.
+      </p>
+    </div>
+    <div id="issues">
+      <h1>Detailed Issues Found</h1>
+      <h3>1: NoSQL injection issue</h3>
+      <p>
+        When query command to the database is not sanitized, it can often
+        erroneously trick the database into executing commands that reveals
+        userdata or have other security vulnerabilities that the developer
+        didn't expect. In this case, the passenger.json route is suppose to only
+        return information about the user corresponding to the inputed username
+        by the client. However, the [$ne] command in the MongoDB API allows the
+        user to find documents whose username is not equal to the inputed
+        username. So when I combined this command with a username that I know
+        the user has not inputed before, I successfully tricked the database to
+        return all entries stored about all of the website's users. This is the
+        command that I used:
+        https://secret-peak-95207.herokuapp.com/passenger.json?username[$ne]=JANE
+      </p>
+      <img src="database .png" alt="database" height="66%" width="54%" />
+      <br />
+      This is an issue with high severity in most times but medium severity in
+      this case. If this happens with a database that stores sensitive user data
+      such as passwords or bank account information, the exposure of it can have
+      dangerous consequences. In this case, the user's ride information would be
+      exposed and can be explored to track user location. The developer can
+      improve on this using sanitization options such as mongo sanitize. An
+      example would be: username: sanitize(request.body.username)
+      <h3>2: Clickjacking Vulnerability</h3>
+      <p>
+        Clickjacking is when an attacker uses multiple layers to trick the user
+        to click on a button or a link on another page when they were actually
+        intending to click on the top level page. Thus the attacker is hijackign
+        the user's click and re routing it to another page possibly containing
+        dangerous viruses that can cause damage the the user. This is usually of
+        high severity because the attacker can gain sensitive information about
+        the user, and gain control to softwares, cameras, and microphones on the
+        computer to ceber track the user in the long term.
+      </p>
+      <img src="clickjacking.png" alt="database" height="66%" width="54%" />
+      <p>
+        I found this issue through running the OWASP Zad Attack Proxy on the
+        url. The developer did not take preventive measures against Clickjacking
+        attacks. Thus the attacker can easily trick the user into downloading
+        malware or revealing valuable information through Clickjacking. One way
+        to defend against this vulnerability is to set X-Frame-Options HTTP
+        headers for all pages returned by your web application. Setting it to
+        deny will not allow your website to be framed by other domain, thus
+        protecting against Clickjacking.
+      </p>
+      <h3>3: Cross Site Scripting Vulnerability</h3>
+      <p>
+        Cross site scripting vulnarability is one of the top security risks in
+        modern web applications according OWASP top 10 list. It allows the
+        attacker to inject client-side scripts into web pages. This is of high
+        severity because it can allow the attacker to bypass access controls
+        such as the same origin policy designed to protect the user from
+        attackes from different domains. Thus it opens the door to many other
+        kinds of cyber attacks such as Clickjacking.
+      </p>
+      <img src="xss.png" alt="database" height="66%" width="54%" />
+      <p>
+        I found that the developer did not enable web browser XSS protection
+        through running the OWASP zed attack proxy on the url. Chrome
+        automatically enabled this feature. However, Safari and Internet
+        Explorer do not and are thus exposed to cross site scripting attacks. I
+        recommend the developer to set this header to the following value, which
+        will enable the XSS protection and instruct the browser to block the
+        response in the event that a malicious script has been inserted from
+        user input, instead of sanitizing: x-xss-protection: 1; mode=block
+      </p>
+    </div>
+    <div id="conclusion">
+      <h1>Conclusion</h1>
+      <p>
+        The cost of improving the security concerns mentioned about is low and
+        fast. The developer can consider using free security tools such as OWASP
+        ZAP or BurpSuite to self check their work.
+      </p>
+    </div>
+    <div id="references">
+      <h1>References</h1>
+      <h4>for clickjacking, I used the following references:</h4>
+      <p>https://www.owasp.org/index.php/Clickjacking</p>
+      <p>
+        https://stackoverflow.com/questions/27358966/how-to-set-x-frame-options-on-iframe
+      </p>
+      <h4>for cross site scripting, I used the following reference:</h4>
+      <p>https://www.keycdn.com/blog/x-xss-protection</p>
+    </div>
+  </body>
+</html>
